@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Customer List</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 8px;
+        }
+        button{
+            background-color: rgb(0, 0, 255);
+            color: white;
+            border-radius: 2px;
+            border: none;
+            padding: 7px 7px 7px 7px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Customer List</h1>
+    <table id="customerTable">
+        <tr>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Street</th>
+            <th>Address</th>
+            <th>State</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Action</th>
+        </tr>
+    </table>
+    <br>
+    <button onclick="openForm()">Add New Customer</button>
+
+    <div id="customerForm" style="display: none;">
+        <h2>Add/Edit Customer</h2>
+            <form id="customerForm">
+                <tr>
+                    <td><input type="text" placeholder="First name" autofocus required id="firstName">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                    <td><input type="text" placeholder="Last name" required id="lastName"></td>
+                </tr>
+                <br><br>
+                <tr>
+                    <td><input type="text" placeholder="Street" required id="street">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                    <td><input type="text" placeholder="Address" required id="address"></td>
+                </tr>
+                <br><br>
+                <tr>
+                    <td><input type="text" placeholder="City" required id="city">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                    <td><input type="text" placeholder="State" required id="state"></td>
+                </tr>
+                <br><br>
+                <tr>
+                    <td><input type="email" placeholder="Email" required id="email">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                    <td><input type="text" placeholder="Phone" maxlength="10" required id="phone"></td>
+                </tr>
+            </form>
+            <br><br>
+            <input type="button" value="Save" onclick="saveCustomer()" style="background-color: rgb(0, 0, 255); color: white; border: none; padding: 7px 7px 7px 7px; border-radius: 2px;">
+            <input type="button" value="Cancel" onclick="closeForm()" style="background-color: rgb(0, 0, 255); color: white; border: none; padding: 7px 7px 7px 7px; border-radius: 2px;">
+        </form>
+    </div>
+
+    <script>
+        let customers = [];
+        let editingIndex = -1;
+
+        function openForm() {
+            document.getElementById("customerForm").style.display = "block";
+        }
+
+        function closeForm() {
+            document.getElementById("customerForm").style.display = "none";
+            resetForm();
+        }
+
+        function resetForm() {
+            document.getElementById("customerForm").reset();
+            editingIndex = -1;
+        }
+
+        function saveCustomer() {
+            const firstName = document.getElementById("firstName").value;
+            const lastName = document.getElementById("lastName").value;
+            const street = document.getElementById("street").value;
+            const address = document.getElementById("address").value;
+            const city = document.getElementById("city").value;
+            const state = document.getElementById("state").value;
+            const email = document.getElementById("email").value;
+            const phone = document.getElementById("phone").value;
+
+            if (editingIndex === -1) {
+                customers.push({
+                    firstName,
+                    lastName,
+                    street,
+                    address,
+                    state,
+                    email,
+                    phone
+                });
+            } else {
+                customers[editingIndex] = {
+                    firstName,
+                    lastName,
+                    street,
+                    address,
+                    state,
+                    email,
+                    phone
+                };
+            }
+
+            updateTable();
+            closeForm();
+        }
+
+        function deleteCustomer(index) {
+            customers.splice(index, 1);
+            updateTable();
+        }
+
+        function editCustomer(index) {
+            const customer = customers[index];
+            document.getElementById("firstName").value = customer.firstName;
+            document.getElementById("lastName").value = customer.lastName;
+            document.getElementById("street").value = customer.street;
+            document.getElementById("address").value = customer.address;
+            document.getElementById("state").value = customer.state;
+            document.getElementById("email").value = customer.email;
+            document.getElementById("phone").value = customer.phone;
+            editingIndex = index;
+            openForm();
+        }
+
+        function updateTable() {
+            const table = document.getElementById("customerTable");
+            table.innerHTML = `
+                <tr>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Street</th>
+                    <th>Address</th>
+                    <th>State</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Action</th>
+                </tr>
+            `;
+
+            for (let i = 0; i < customers.length; i++) {
+                const customer = customers[i];
+                const row = table.insertRow(-1);
+                const cell1 = row.insertCell(0);
+                const cell2 = row.insertCell(1);
+                const cell3 = row.insertCell(2);
+                const cell4 = row.insertCell(3);
+                const cell5 = row.insertCell(4);
+                const cell6 = row.insertCell(5);
+                const cell7 = row.insertCell(6);
+                const cell8 = row.insertCell(7);
+
+                cell1.innerHTML = customer.firstName;
+                cell2.innerHTML = customer.lastName;
+                cell3.innerHTML = customer.street;
+                cell4.innerHTML = customer.address;
+                cell5.innerHTML = customer.state;
+                cell6.innerHTML = customer.email;
+                cell7.innerHTML = customer.phone;
+                cell8.innerHTML = `<button onclick="editCustomer(${i})">Edit</button> <button onclick="deleteCustomer(${i})">Delete</button>`;
+            }
+        }
+    </script>
+</body>
+</html>
